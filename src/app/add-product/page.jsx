@@ -1,6 +1,6 @@
 'use client';
 import { useState } from "react";
-import ComboBox from "./components/ComboBox";
+import ComboBox from "../components/ComboBox";
 export default function Home() {
   //ステート管理
 
