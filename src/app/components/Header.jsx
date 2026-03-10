@@ -1,12 +1,19 @@
-
+'use client';
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+const Header = ({title}) => {
+    const pathname = usePathname();
 
-const Header = () => {
-
+    const titleMap = {
+    '/': 'Top',
+    '/add-product': '商品登録画面',
+  };
+  //ヘッダーのタイトル表示のマッピング
+  const currentTitle = titleMap[pathname] || 'タイトルなし';
     return (
         <header className="wrapper  bg-main-bg sticky h-[80px] rounded-b-[80px] flex justify-center items-center">
 
-               <h1 className=" text-white text-5xl ">Top</h1>
+               <h1 className=" text-white text-5xl ">{currentTitle}</h1>
 
 
         </header>
