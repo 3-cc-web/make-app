@@ -79,7 +79,7 @@ console.log(ingredients);
     <div>
 
         <div>
-          <Combobox ingredients={frameworks} value={query}  onValueChange={setQuery}  >
+          <Combobox items={frameworks} value={query}  onValueChange={setQuery}  >
             <ComboboxInput placeholder={`成分を選択...`} onChange={(e) => setQuery(e.target.value)} style={{ fontSize: '1.275rem', lineHeight: '2.25rem' }} className={"h-[60px] mb-6 text-3xl"}/>
             <ComboboxContent>
               <ComboboxEmpty>成分が見つかりません</ComboboxEmpty>
