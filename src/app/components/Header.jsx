@@ -4,11 +4,11 @@ import Link from "next/link";
 const Header = () => {
 
     return (
-        <header>
-            <div className="wrapper header-flex">
-               <h1> <Link href="/">test</Link></h1>
+        <header className="wrapper  bg-main-bg sticky h-[80px] rounded-b-[80px] flex justify-center items-center">
 
-            </div>
+               <h1 className=" text-white text-5xl ">Top</h1>
+
+
         </header>
     )
 };
