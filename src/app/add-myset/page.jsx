@@ -2,7 +2,8 @@
 
 // ※あとで各UIをコンポーネント化予定
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { supabase } from "@/lib/supabaseClient";
 
 export default function AddMyset() {
 
@@ -21,57 +22,91 @@ export default function AddMyset() {
   // カテゴリ一覧を取得
   const fetchCategories = async () => {
     const {data} = await supabase
-      .from('t_categories')
+      .from('category')
       .select(`
         id,
         name
       `)
-      .order('created_at', {ascending: false})
+      .order('id', {ascending: true})
     setCategories(data || [])
   }
 
-  // そのカテゴリの商品を取得
-  const fetchCategoryItems = async () => {
-    const {data} = await supabase
-      .from('t_items')
-      .select(`
-        id,
-        name,
-        imageUrl
-      `)
-      .eq('categoryId', category)
-      .order('created_at', {ascending: false})
-    setCategoryItems(data || [])
-  }
+  useEffect(() => {
+    fetchCategories()
+  }, [])
+
+  // // そのカテゴリの商品を取得
+  // const fetchCategoryItems = async () => {
+  //   const {data} = await supabase
+  //     .from('product')
+  //     .select(`
+  //       id,
+  //       name,
+  //       image_path
+  //     `)
+  //     .eq('category', category)
+  //     .order('id', {ascending: false})
+  //   setCategoryItems(data || [])
+  // }
+
+  // // 次のマイアイテムを選択
+  // const setNextItems = () => {
+
+  // }
 
   return (
     <>
       <h2>組合わせ登録</h2>
 
       <p>名前</p>
-      <input type="text" value={name} onChange={(e) => setName(e.target.value)}/>
+      <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="border"/>
 
       {/* 登録しようとしているマイアイテムエリア */}
-      <div>
-        
-        <button onClick={() => setMyItems()}>追加する</button>
+      {/* <div>
+        <div>
+          {
+            myItems ? (
+              myItems.map((mi) => (
+            <p key={mi.id} value={mi.id}>
+              {mi.id}
+            </p>
+          ))
+            ) : (
+              <p>なし</p>
+            )
+          }          
+        </div>
+        <div>
+          <button onClick={() => setNextItems()}>追加する</button>          
+        </div>
       </div>
 
-      <button onClick={() => setIsOpen(true)}>完成</button>
+      <button onClick={() => setIsOpen(true)}>完成</button> */}
+
+      
 
       <p>商品カテゴリー</p>
-      <select>
-        {categories.map((c) => (
-          <option key={c.id} value={c.id} onChange={() => setCategory(c.id)}>
-            {c.name}
-          </option>
-        ))}
-      </select>
+          {
+            categories ? (
+              <select className="border" onChange={(e) => setCategory(e.target.value)}>
+                {
+                  categories.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name}
+                    </option>
+                  ))
+                }
+              </select>
+            ) : (
+              <p>カテゴリ取得中…</p>
+            )
+          }       
 
-      <p>ここに選択されてるカテゴリ名を表示</p>
-      {categoryItems.map((ci) => (
+
+      <p>選択されてるカテゴリ:{category}</p>
+      {/* {categoryItems.map((ci) => (
         <radio key={ci.id} value={ci.id} onChange={() => setItem(ci.id)} name="categoryItems">{ci.name}</radio>
-      ))}
+      ))} */}
       
 
     </>
