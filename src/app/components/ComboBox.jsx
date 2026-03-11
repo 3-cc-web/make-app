@@ -60,7 +60,12 @@ const [query, setQuery] = useState("");
 //インプット用
 const handleAdd = () => {
     if(query === "") return;
+    if(ingredients.length >= 5){
 
+        alert("成分は最大5件です");
+        setQuery("");
+        return;
+    }
     setIngredients([...ingredients, query]);
 
     setQuery("");
@@ -95,11 +100,11 @@ console.log(ingredients);
 
         </div>
 
-        <div className="flex justify-center mb-4">
-            <Button onClick={handleAdd} className="h-[50px] w-[70px]">決定</Button>
+        <div className="flex justify-center mb-10">
+            <Button onClick={handleAdd} className="h-[50px] w-[70px] text-2xl">決定</Button>
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex gap-6 flex-col">
 
             {ingredients.map((v,i) => (
               <Badge key={i} variant="outline" className="text-xl h-[30px] bg-gray-200">
