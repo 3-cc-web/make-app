@@ -3,19 +3,31 @@
 import { useState } from "react";
 
 //カテゴリーの選択リスト
-const category = ["化粧水","セラム","乳液","クリーム","日焼け止め","その他"];
+// const category = ["化粧水","セラム","乳液","クリーム","日焼け止め","その他"];
 
-export default function ProductRegister(){
+export default function ProductRegister({
+    category,
+    productName,
+    setProductName,
+    selectedCategory,
+    setSelectedCategory,
+    customCategory,
+    setCustomCategory,
+    image,
+    setImage,
+
+
+    }){
     //商品名
-    const [productName,setProductName] = useState("");
+    // const [productName,setProductName] = useState("");
     //選んだカテゴリー
-    const [selectedCategory,setSelectedCategory] = useState("");
+    // const [selectedCategory,setSelectedCategory] = useState("");
     //入力を選択したときの
-    const [customCategory,setCustomCategory] = useState("");
+    // const [customCategory,setCustomCategory] = useState("");
     //成分
     // const [ingredient,setIngredient] = useState("");
     //画像ファイル
-    const [image,setImage] = useState(null);
+    // const [image,setImage] = useState(null);
     //画像見る用のURL
     const [preview,setPreview] = useState("");
 
@@ -29,22 +41,7 @@ export default function ProductRegister(){
         setPreview(URL.createObjectURL(file));
     }
 
-    function handleSubmit(){
-        const category = selectedCategory === "入力" ? customCategory : selectedCategory;
 
-        // if(!productName){
-        //     alert("商品を入力してください");
-        //     return;
-        // }
-        // if(!category){
-        //     alert("カテゴリーを選んだください");
-        //     return;
-        // }
-
-        //ここで親コンポーネントに渡す
-        console.log({productName,category,ingredient,image});
-        // alert("完成しました");登録？完成？ボタンの文字。
-    }
 
 
     return (
@@ -93,17 +90,17 @@ export default function ProductRegister(){
             {/* タグ一覧 */}
             <div className="flex flex-wrap gap-2">
                 {/* map()で5個のボタンを作る */}
-                {category.map((cat) => (
+                {category?.map((cat,i) => (
                 <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
+                key={cat.id}
+                onClick={() => setSelectedCategory(cat.id)}
                 className={`px-3 py-1 rounded-full text-sm border
-                    ${selectedCategory === cat
+                    ${selectedCategory === cat.id
                       ? "bg-green-300 text-white border-green-300"   //選択中の時
                       : "bg-gray-100 text-gray-600 border-gray-200"  //未選択の時
                     }`}
                 >
-                {cat}
+                {cat.name}
                 </button>
                 ))}
 
@@ -135,19 +132,7 @@ export default function ProductRegister(){
         <div>
             </div>
             {/* ===== フッター（戻る／完成ボタン） ===== */}
-            <div className="px-6 pb-8 flex items-center justify-between">
-            
-            {/* 戻るボタン */}
-            <button className="text-pink-400 text-2xl">←</button>
 
-            {/* 完成ボタン */}
-            <button
-            onClick={handleSubmit}
-            className="bg-pink-300 hover:bg-pink-400 text-white font-bold py-2 px-10 rounded-full"
-            >
-                完成
-            </button>
-        </div>
         </div>
 
     );
