@@ -108,17 +108,24 @@ export default function AddMyset() {
               <div key={index}>
                 <p value={mi.id} className="w-[100px] h-[100px] border">
                   <Image src={getImageUrl(mi.image_path)} alt='商品画像' width={100} height={100}
-                    style={{width:"auto", height:"100px"}}/>
+                    style={{width:"auto", height:"90%"}}/>
                 </p>
                 <button 
                   onClick={()=>{
                   setMyItems(myItems.filter((_, i) => i !== index))
-                }}
-                className="mt-5 bg-gray-400 border cursor-pointer">
-                  削除
+                  }}
+                  style={{
+                    width:"15px",
+                    height:"15px",
+                    backgroundImage:"url(/close.svg)",
+                    backgroundSize:"cover",
+                    backgroundPosition:"center"
+                  }}
+                >
                 </button>
                 {index < 9 && (
-                  <p>×</p>
+                  <Image src="/kakeru.svg" alt='商品画像' width={70} height={70}
+                    style={{width:"auto", height:"30px"}}/>
                 )}
               </div>
             ))
