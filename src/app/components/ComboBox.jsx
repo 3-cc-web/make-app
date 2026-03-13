@@ -13,7 +13,15 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useState } from "react";
 import { X } from "lucide-react";
-
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer"
+import { Search } from "lucide-react"
 
 const  ComboBox = ({ingredients,setIngredients}) => {
   const frameworks = [
@@ -52,7 +60,9 @@ const  ComboBox = ({ingredients,setIngredients}) => {
   "酸化亜鉛", "酸化チタン", "メトキシケイヒ酸エチルヘキシル", "t-ブチルメトキシジベンゾイルメタン"
 ];
 
-
+//ドロワー用
+const [open, setOpen] = useState(false);
+//入力用
 const [query, setQuery] = useState("");
 
 // const displayRows = Array.from({ length: ingredients.length + 1 });
@@ -68,6 +78,7 @@ const handleAdd = () => {
     }
     setIngredients([...ingredients, query]);
 
+    setOpen(false);
     setQuery("");
   };
 
@@ -76,11 +87,19 @@ const handleAdd = () => {
     setIngredients(ingredients.filter((_, i) => i !== index));
   };
 
+// 決定ボタンを押してドロワーを閉じる
+  const handleFinalize = () => {
+    setOpen(false); // ドロワーを閉じる
+  };
+
+
 console.log(ingredients);
 
 
 
   return (
+
+
     <div>
 
         <div>
