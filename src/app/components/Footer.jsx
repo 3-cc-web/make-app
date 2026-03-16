@@ -6,10 +6,10 @@ const Footer = () => {
 
      const titleMap = {
          '/add-product': '商品\n登録',
-         '/add-myset': '組み合わせ\n登録',
+         '/add-myset': '組合わせ\n登録',
          '/': 'Top',
          '/products':'商品\n確認',
-         '':'組み合わせ\n確認',
+         '':'組合わせ\n確認',
          };
     //ヘッダーのタイトル表示のマッピング
     //  const currentTitle = titleMap[pathname] || 'タイトルなし';
@@ -29,6 +29,9 @@ const Footer = () => {
                     if(i===0 || i===1) {
                         bgColor ="bg-[#B3E3D3]"
                     }
+                    if(i===3 || i===4) {
+                    bgColor = "bg-[#B59372]"
+                        }
                     return(
 
                         <li key={i} className={`py-4 flex-1 text-center text-white font-bold text-sm ${isActive ? `h-[90px] rounded-t-2xl bg-[#F4969C]` : `h-[60px] ${bgColor}`}`}>

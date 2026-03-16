@@ -136,7 +136,7 @@ const filteredProducts =
                 className="flex flex-col items-center gap-1 focus:outline-none"
                 >
                 {/* 商品名。長い場合は省略 */}
-                <span className="text-xs text-gray-600 text-center leading-tight line-clamp-2 w-full">
+                <span className="text-sm text-center leading-tight line-clamp-2 w-full">
                     {product.name}
                 </span>
                 {/* 画像エリア。imageがnullのときはグレーのプレースホルダー */}
