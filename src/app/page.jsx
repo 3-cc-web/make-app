@@ -23,7 +23,7 @@ export default function Home() {
     </div>
 
     <div className="flex-1 flex flex-col justify-center items-center">
-      <Link href={"/"} className="bg-[#E1C4B7] p-4  flex flex-col justify-center items-center rounded-2xl w-[280px]">
+      <Link href={"/products"} className="bg-[#E1C4B7] p-4  flex flex-col justify-center items-center rounded-2xl w-[280px]">
           <p className="text-white text-4xl font-bold mb-4">商品登録確認</p>
           <figure><Image src={"/top-img-03.png"} width={110} height={61} alt="商品登録確認" /></figure>
 

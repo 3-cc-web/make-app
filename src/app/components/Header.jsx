@@ -7,6 +7,7 @@ const Header = () => {
     const titleMap = {
     '/': 'Top',
     '/add-product': '商品登録',
+    '/products': '商品確認',
   };
   //ヘッダーのタイトル表示のマッピング
   const currentTitle = titleMap[pathname] || 'タイトルなし';

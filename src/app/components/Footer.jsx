@@ -8,7 +8,7 @@ const Footer = () => {
          '/add-product': '商品\n登録',
          '/add-myset': '組み合わせ\n登録',
          '/': 'Top',
-         '/check':'商品\n確認',
+         '/products':'商品\n確認',
          '':'組み合わせ\n確認',
          };
     //ヘッダーのタイトル表示のマッピング

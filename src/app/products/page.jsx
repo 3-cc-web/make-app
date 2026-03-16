@@ -1,6 +1,8 @@
 "use client";
 import { useState } from "react";
 
+
+
 const sampleProducts = [
   {id:1,name:"モイスチャー化粧水",category:"化粧水",image:null,ingredients:["ヒアルロン酸","グリセリン"]},
   {id:2,name:"リペア乳液",category:"乳液",image: null,ingredients: ["セラミド"]},
@@ -101,17 +103,20 @@ const filteredProducts =
     return (
         <div>
         <main className="flex-1 px-4 pt-4 pb-24">
-            <h2 className="text-center font-semibold text-base mb-3 text-gray-700">
+
+            <p className="text-center font-bold text-[32px] mb-3 leading-[120%]">
             商品カテゴリー
-            </h2>
+            </p>
 
             {/* カテゴリー選択セレクトボックス */}
             <div className="mb-5">
             <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)} // 選択が変わったらstateを更新
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#8b6f5e]"
+                // className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#8b6f5e] border-green-300"
+                className="mt-4 w-full border border-green-300 rounded-full px-4 py-2 text-sm outline-none focus:ring-4 focus:ring-green-200"
             >
+
                 {/* categories配列をループしてoptionを生成 */}
                 {categories.map((cat) => (
                 <option key={cat} value={cat}>
