@@ -131,6 +131,10 @@ const filteredProducts =
                 onClick={() => handleCardClick(product)}
                 className="flex flex-col items-center gap-1 focus:outline-none"
                 >
+                {/* 商品名。長い場合は省略 */}
+                <span className="text-xs text-gray-600 text-center leading-tight line-clamp-2 w-full">
+                    {product.name}
+                </span>
                 {/* 画像エリア。imageがnullのときはグレーのプレースホルダー */}
                 <div className="w-full aspect-square bg-gray-200 rounded-md flex items-center justify-center overflow-hidden">
                     {product.image ? (
@@ -139,10 +143,6 @@ const filteredProducts =
                     <span className="text-gray-400 text-xs">image</span>
                     )}
                 </div>
-                {/* 商品名。長い場合は省略 */}
-                <span className="text-xs text-gray-600 text-center leading-tight line-clamp-2 w-full">
-                    {product.name}
-                </span>
                 </button>
             ))}
             </div>
