@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 
 //カテゴリーの選択リスト
 // const category = ["化粧水","セラム","乳液","クリーム","日焼け止め","その他"];
@@ -13,8 +14,8 @@ export default function ProductRegister({
     setSelectedCategory,
     customCategory,
     setCustomCategory,
-    image,
-    setImage,
+    isImage,
+    setIsImage,
 
 
     }){
@@ -35,7 +36,7 @@ export default function ProductRegister({
     function handleImageChange(e) {
         const file = e.target.files[0];
         if(!file)return;
-        setImage(file);
+        setIsImage(file);
         //URL.createObjectURL(file) は選んだファイルをブラウザだけで使える一時的な住所（URL）に変換する。
         //ファイルをURLに変換しないと表示できない
         setPreview(URL.createObjectURL(file));
@@ -56,11 +57,16 @@ export default function ProductRegister({
                 />
                 {preview ? (
                 /* 画像が選ばれたら */
-                <img
-                src={preview} //URL.createObjectURLで作った一時URLを渡す
-                alt="プレビュー"
-                className="w-40 h-40 object-cover rounded-lg"
-                />
+                <div className="w-[150px] h-[150px] flex items-center justify-center bg-gray-100 rounded-lg overflow-hidden">
+
+                    <Image
+                    src={preview} //URL.createObjectURLで作った一時URLを渡す
+                    alt="プレビュー"
+                    className="object-contain w-full h-full"
+                    width={150}
+                    height={150}
+                    />
+                </div>
                 ) : (
                 /* 画像選んでないとき */
                 <div className="w-40 h-40 bg-gray-300 rounded-lg flex flex-col items-center justify-center text-white">
@@ -73,7 +79,7 @@ export default function ProductRegister({
 
         {/* ===== 商品名 ===== */}
         <div>
-            <h2 className="text-center font-bold text-gray-700 mb-5 mt-5">商品名</h2>
+            <h2 className="mt-[40px] text-[#4d4d4d] font-bold text-[25px] text-center mb-4">商品名</h2>
             <input
             type="text"
             placeholder="入力..."
@@ -85,16 +91,17 @@ export default function ProductRegister({
 
         {/* ===== カテゴリー ===== */}
         <div>
-            <h2 className="text-center font-bold text-gray-700 mb-5 mt-5">カテゴリー</h2>
+            <h2 className="mt-[40px] text-[#4d4d4d] font-bold text-[25px] text-center mb-4">カテゴリー</h2>
 
             {/* タグ一覧 */}
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-5 justify-center">
                 {/* map()で5個のボタンを作る */}
                 {category?.map((cat,i) => (
                 <button
                 key={cat.id}
+                type="button"
                 onClick={() => setSelectedCategory(cat.id)}
-                className={`px-3 py-1 rounded-full text-sm border
+                className={`px-3 py-1 rounded-[10px] text-sl border
                     ${selectedCategory === cat.id
                       ? "bg-green-300 text-white border-green-300"   //選択中の時
                       : "bg-gray-100 text-gray-600 border-gray-200"  //未選択の時
@@ -107,7 +114,8 @@ export default function ProductRegister({
               {/* 「入力」タグ */}
                 <button
                 onClick={() => setSelectedCategory("入力")}
-                className={`px-3 py-1 rounded-full text-sm border
+                type="button"
+                className={`px-3 py-1 rounded-[10px] text-sl border
                 ${selectedCategory === "入力"
                     ? "bg-green-300 text-white border-green-300"
                     : "bg-gray-100 text-gray-600 border-gray-200"
@@ -124,7 +132,7 @@ export default function ProductRegister({
                 placeholder="カテゴリーを入力..."
                 value={customCategory}
                 onChange={(e) => setCustomCategory(e.target.value)}
-                className="mt-2 w-full border border-green-300 rounded-full px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-green-200"
+                className="mt-6 w-full border border-green-300 rounded-full px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-green-200"
                 />
             )}
         </div>
