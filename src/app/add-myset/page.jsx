@@ -177,7 +177,7 @@ export default function AddMyset() {
 
     alert("更新完了しました！");
     setIsOpenConfirm(false);
-    router.push("/"); // 一覧に戻る
+    router.push("/mysets"); // 一覧に戻る
   };
 
   return (
