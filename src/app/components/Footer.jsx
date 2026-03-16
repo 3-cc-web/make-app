@@ -8,15 +8,15 @@ const Footer = () => {
          '/add-product': '商品\n登録',
          '/add-myset': '組合わせ\n登録',
          '/': 'Top',
-         '/check':'商品\n確認',
-         '':'組合わせ\n確認',
+         '/products':'商品\n確認',
+         '/mysets':'組合わせ\n確認',
          };
 
 
     if(pathname === '/') return;
     return (
 
-        <footer className="fixed bottom-0 left-0 w-full z-50">
+        <footer className="fixed bottom-0 left-0 w-full z-50 bg-white">
             <ul className="flex justify-center items-end gap-1">
                 {Object.entries(titleMap).map(([path,label],i) => {
 
