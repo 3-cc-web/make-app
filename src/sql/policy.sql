@@ -1,4 +1,4 @@
--- SQL Editorから登録するポリシー候補
+-- SQL Editorから登録するかもしれないポリシー候補
 
 -- 全員に商品情報のReadを許可
 create policy "product_select"
@@ -19,6 +19,7 @@ using (true);
 -- to public…誰が（publicだと全員）
 -- using (true)…全行取得OK
 
+-- バケット
 CREATE POLICY "allow upload qf0l9g_0" 
 ON storage.objects 
 FOR INSERT TO anon 

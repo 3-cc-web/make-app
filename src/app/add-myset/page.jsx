@@ -3,12 +3,12 @@
 import { useEffect, useState } from "react"
 import { supabase } from "@/lib/supabaseClient";
 import Image from "next/image";
-import { useRouter } from "next/navigation"
+// import { useRouter } from "next/navigation"
 
 export default function AddMyset() {
 
-  // ルータ（今のところ使ってない）
-  const router = useRouter();
+  // // ルータ
+  // const router = useRouter();
 
   // カテゴリ一覧
   const [categories, setCategories] = useState(null);
@@ -21,8 +21,10 @@ export default function AddMyset() {
   // マイセット登録内容
   const [name, setName] = useState("");
   const [myItems, setMyItems] = useState([]);
-  // モーダル
-  const [isOpen, setIsOpen] = useState(false);
+  // 商品選択モーダル
+  const [isOpenItem, setIsOpenItem] = useState(false);
+  // 完成確認モーダル
+  const [isOpenConfirm, setIsOpenConfirm] = useState(false);
 
   // 初期描画時
   useEffect(() => {
@@ -66,6 +68,7 @@ export default function AddMyset() {
   // マイアイテム登録
   const addMyset = async () => {
     if(name === "") return alert("マイセット名は必ず入力して下さい。");
+    if(myItems.length < 1) return alert("商品を1つ以上選択してください。");
 
     const { error: insertError } = await supabase
     .from("myset")
@@ -90,68 +93,86 @@ export default function AddMyset() {
       return
     }
     alert("登録完了しました！")
-    setIsOpen(false)
+    setIsOpenConfirm(false)
   }
 
   return (
-    <>
-      <h2>組合わせ登録</h2>
-
-      <p>名前</p>
-      <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="border"/>
+    <div className="pb-[200px]">
+      <p className="mt-[50px] text-[#4d4d4d] font-bold text-[25px] text-center">名前</p>
+      <div className="mt-[10px] text-center">
+        <input type="text" value={name} onChange={(e) => setName(e.target.value)} 
+        className="w-[300px] h-[30px] border-[#DB9292] border-[4px] rounded-[10px] text-[14px] text-center"
+        placeholder="入力..."/>        
+      </div>
 
       {/* 登録しようとしているマイアイテムエリア */}
-      <div>
-        <div className="mt-5 flex flex-wrap gap-5">
-          {
-            myItems.length > 0 ? (
-              myItems.map((mi) => (
-            <p key={mi.id} value={mi.id} className="w-[100px] h-[100px] border">
-              <Image src={getImageUrl(mi.image_path)} alt='商品画像' width={100} height={100}
-                style={{width:"auto", height:"100px"}}/>
-            </p>
-          ))
-            ) : (
-              <p>なし</p>
-            )
-          }          
-        </div>
-        <div>
-          <button 
-          onClick={()=>{
-            if(!item) return;
-            if(myItems.find(mi=>mi.id === item.id)){
-              return;
-            }
-            setMyItems([...myItems, item])
-            setItem(null)
-          }} 
-          className="mt-5 bg-gray-400 border cursor-pointer">
-            追加する
-          </button>
-        </div>
+      <div className="w-[350px] min-h-[140px] mt-[40px] mx-auto p-[5px] border-[#9CC8BA] border-[8px] rounded-[15px] flex flex-wrap items-center justify-center">
+        {
+          myItems.length > 0 ? (
+            myItems.map((mi, index) => (
+              <div key={index} className="flex h-[110px]">
+                <div className="w-[80px] h-[100px]">
+                    <p className="h-[32px] text-xs">{mi.name}</p>
+                    <div className="w-[60px] h-[60px] mt-[5px] mx-auto flex items-center justify-center border-[#d9d9d9] border-[1px] bg-white relative">
+                      <Image src={getImageUrl(mi.image_path)} alt='商品画像' width={100} height={100}
+                        style={{width:"auto", height:"90%"}}/>
+                      <button 
+                        onClick={()=>{
+                        setMyItems(myItems.filter((_, i) => i !== index))
+                        }}
+                        style={{
+                          width:"15px",
+                          height:"15px",
+                          backgroundImage:"url(/close.svg)",
+                          backgroundSize:"cover",
+                          backgroundPosition:"center"
+                        }}
+                        className="absolute bottom-[-6px] right-[-5px]"
+                      >
+                      </button>                      
+                    </div>
+                </div>
+                {index < 9 && (
+                  (index % 3 !== 2) && (
+                    <div className="w-[40px] h-[100px] pt-[60px]">
+                      <Image src="/kakeru.svg" alt='×' width={70} height={70}
+                        style={{width:"auto", height:"25px"}}
+                        className="mx-auto"/>
+                    </div>
+                  )
+                )}
+              </div>
+            ))
+          ) : (
+            <p className="w-[230px] text-black text-[20px] text-center">登録した商品を追加してください</p>
+          )
+        }          
       </div>
 
       {/* 完成ボタン */}
-      <button 
-      onClick={() => setIsOpen(true)}
-      className="mt-5 bg-gray-400 border cursor-pointer">
-        完成
-      </button>
+      <div className="w-full mx-auto mt-[20px] flex justify-center">
+        <button 
+        onClick={() => setIsOpenConfirm(true)}
+        className="w-[120px] h-[46px] mt-5 bg-[#F4969C] rounded-[10px] cursor-pointer text-[25px] text-center text-white">
+          完成
+        </button>
+      </div>
 
-      {/* モーダル */}
-      {isOpen && (
+      {/* 完成確認モーダル */}
+      {isOpenConfirm && (
         <div className="fixed inset-0 bg-white/80 flex flex-col items-center justify-center">
-          <p>完成でよろしいでしょうか？</p>
-          <div className="mt-5 flex gap-5">
+          <div className="w-[320px] py-2 px-3  border-[10px] border-[#DB9292] rounded-[20px] bg-white flex flex-col items-center justify-center">
+            <p className="text-[#4d4d4d] text-[20px] text-center">完成でよろしいでしょうか？</p>
+          </div>
+          <div className="mt-[10px] flex gap-5">
             <button 
-            onClick={() => setIsOpen(false)} 
-            className="border cursor-pointer">
+            onClick={() => setIsOpenConfirm(false)} 
+            className="h-[40px] border cursor-pointer px-5 text-[20px] text-center bg-[#8FA0E1] text-white rounded-[10px] border-[2px] border-white">
               キャンセル
             </button>
             <button 
             onClick={() => addMyset()} 
-            className="border cursor-pointer">
+            className="h-[40px] border cursor-pointer px-5 text-[20px] text-center bg-[#C73537] text-white rounded-[10px] border-[2px] border-white">
               OK
             </button>
           </div>
@@ -159,53 +180,114 @@ export default function AddMyset() {
       )}
 
       {/* カテゴリ選択 */}
-      <div className="mt-5">
-        <p>商品カテゴリー</p>
-            {
-              categories ? (
-                <select className="border cursor-pointer" onChange={(e) => setCategory(e.target.value)}>
-                  <option value="0">All</option>
-                  {
-                    categories.map((c) => (
-                      <option key={c.id} value={c.id}>
-                        {c.name}
-                      </option>
-                    ))
-                  }
-                </select>
-              ) : (
-                <p>カテゴリ取得中…</p>
-              )
-            }      
+        <p className="mt-[40px] text-[#4d4d4d] font-bold text-[25px] text-center">商品カテゴリー</p>
+        <div className="mt-5 flex justify-center">
+          {
+            categories ? (
+              <select onChange={(e) => setCategory(Number(e.target.value))}
+                className="w-[300px] h-[30px] mt-[5px] px-2 border-[#9CC8BA] border-[4px] rounded-[10px] text-[14px]">
+                <option value="0">All</option>
+                {
+                  categories.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name}
+                    </option>
+                  ))
+                }
+              </select>
+            ) : (
+              <p>カテゴリ取得中…</p>
+            )
+          }
       </div>
  
       {/* 商品表示エリア */}
-      <div className="mt-5 flex flex-wrap gap-5">
         {
           product.length > 0 ? (
-            product
-            .filter((p)=> category == 0 || p.category == category)
-            .map((p) => (
-              <label key={p.id} 
-              className={`w-[100px] h-[150px] p-1 border rounded cursor-pointer
-                          ${item == p ? "border-blue-500 border-2" : "border-gray-300"}`}>
-                <input
-                  type="radio"
-                  value={p}
-                  name="products"
-                  onChange={() => setItem(p)}
-                  className="hidden"
-                />
-                <p className="text-xs">{p.name}</p>
-                <Image src={getImageUrl(p.image_path)} alt='商品画像' width={100} height={100}
-                style={{width:"auto", height:"100px"}}/>
-              </label>                  
-            ))  
+            <div className="w-[350px] mt-[40px] mx-auto grid grid-cols-4 gap-[10px]">
+              {
+                product
+                .filter((p)=> category === 0 || p.category === category)
+                .map((p) => (
+                  <div key={p.id} 
+                    onClick={() => {
+                          setItem(p)
+                          setIsOpenItem(true)
+                        }}
+                    className={"w-[80px] h-[110px] cursor-pointer flex flex-col justify-center items-center"}>
+                      <p className="h-[32px] text-xs">{p.name}</p>
+                      <div className="w-[60px] h-[60px] mt-[5px] flex items-center justify-center border-[#d9d9d9] border-[1px] bg-white">
+                        <Image src={getImageUrl(p.image_path)} alt='商品画像' width={100} height={100}
+                        style={{width:"auto", height:"90%"}}
+                        />
+                      </div>
+                  </div>                  
+                ))  
+              }
+            </div>  
           ) : (
-            <p>商品情報を取得中…</p>
+            <p className="mt-10 text-center">商品情報を取得中…</p>
           )
-        }   
-      </div>
-    </>
+        }
+
+      {/* 商品選択モーダル */}
+      {isOpenItem && (
+        myItems.length < 10 ? (
+          <div className="bg-white/80 fixed inset-0 flex flex-col items-center justify-center">
+            <div className="w-[320px] py-2 px-3  border-[10px] border-[#DB9292] rounded-[20px] bg-white flex flex-col items-center justify-center">
+              <p className="text-[20px]">{item.name}</p>
+              <p className="w-fit mt-[6px] px-3 text-[20px] text-center bg-[#B3E3D3] text-white rounded-[10px]">{categories?.find(c => c.id === item.category)?.name}</p>
+              <div className="w-[120px] h-[120px] mt-[10px] flex items-center justify-center border-[#d9d9d9] border-[1px] bg-white">
+                <Image src={getImageUrl(item.image_path)} alt='商品画像' width={200} height={200}
+                                style={{width:"auto", height:"90%"}}/>
+              </div>
+              <div className="mt-[10px] text-sm flex flex-col items-center justify-center">
+                <p>{item.ingredient1 ?? null}</p>
+                <p>{item.ingredient2 ?? null}</p>
+                <p>{item.ingredient3 ?? null}</p>
+                <p>{item.ingredient4 ?? null}</p>
+                <p>{item.ingredient5 ?? null}</p>
+                <p>{item.ingredient6 ?? null}</p>
+                <p>{item.ingredient7 ?? null}</p>
+                <p>{item.ingredient8 ?? null}</p>
+                <p>{item.ingredient9 ?? null}</p>
+                <p>{item.ingredient10 ?? null}</p>
+              </div>
+            </div>
+            <div className="mt-[10px] flex gap-5">
+              <button 
+              onClick={() => setIsOpenItem(false)} 
+              className="h-[40px] cursor-pointer px-5 text-[20px] text-center bg-[#8FA0E1] text-white rounded-[10px] border-[2px] border-white">
+                閉じる
+              </button>
+              <button 
+              onClick={()=>{
+                if(!item) return;
+                setMyItems([...myItems, item])
+                setIsOpenItem(false)
+                setItem(null)
+              }} 
+              className="h-[40px] border cursor-pointer px-5 text-[20px] text-center bg-[#B3E3D3] text-white rounded-[10px] border-[2px] border-white">
+                追加
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="fixed inset-0 bg-white/80 flex flex-col items-center justify-center">
+            <div className="w-[320px] py-2 px-3  border-[10px] border-[#DB9292] rounded-[20px] bg-white flex flex-col items-center justify-center">
+              <p className="w-[210px] text-[#4d4d4d] text-[20px] text-center">組合わせで登録できる商品は10個までです。</p>
+            </div>
+            <div className="mt-[10px]">
+              <button 
+                  onClick={() => setIsOpenItem(false)} 
+                  className="h-[40px] border cursor-pointer px-5 text-[20px] text-center bg-[#C73537] text-white rounded-[10px] border-[2px] border-white">
+                    閉じる
+              </button>
+            </div>
+          </div>
+        )
+      )}
+    </div>
   )
 }
+
