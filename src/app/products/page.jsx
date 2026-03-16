@@ -113,7 +113,6 @@ const filteredProducts =
             <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)} // 選択が変わったらstateを更新
-                // className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#8b6f5e] border-green-300"
                 className="mt-4 w-full border border-green-300 rounded-full px-4 py-2 text-sm outline-none focus:ring-4 focus:ring-green-200"
             >
 
