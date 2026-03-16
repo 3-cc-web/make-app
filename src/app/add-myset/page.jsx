@@ -3,12 +3,13 @@
 import { useEffect, useState } from "react"
 import { supabase } from "@/lib/supabaseClient";
 import Image from "next/image";
-// import { useRouter } from "next/navigation"
-
+import { useSearchParams, useRouter } from "next/navigation";
 export default function AddMyset() {
 
   // // ルータ
-  // const router = useRouter();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const editId = searchParams.get("edit");
 
   // カテゴリ一覧
   const [categories, setCategories] = useState(null);
@@ -28,6 +29,7 @@ export default function AddMyset() {
 
   // 初期描画時
   useEffect(() => {
+
     // カテゴリ一覧を取得
     const fetchCategories = async () => {
       const {data} = await supabase
@@ -51,8 +53,58 @@ export default function AddMyset() {
         .order('id', {ascending: true})
       setProduct(data || [])
     }
+
     fetchProduct()
-  }, [])
+
+
+
+
+  }, []);
+
+//組合わせ確認からページ推移してきたときの処理
+  useEffect(() => {
+  if (!editId) return; // 編集IDがなければ何もしない
+
+  const fetchEditData = async () => {
+    const { data, error } = await supabase
+      .from('myset')
+      .select(`
+        name,
+        product1:product!product1(*),
+        product2:product!product2(*),
+        product3:product!product3(*),
+        product4:product!product4(*),
+        product5:product!product5(*),
+        product6:product!product6(*),
+        product7:product!product7(*),
+        product8:product!product8(*),
+        product9:product!product9(*),
+        product10:product!product10(*)
+      `)
+      .eq('id', editId)
+      .single();
+
+    if (error) {
+      console.error("データ取得失敗:", error);
+      return;
+    }
+
+    if (data) {
+      // セット名をセット
+      setName(data.name);
+
+      // product1〜10をループで配列（myItems）にまとめる
+      const loadedItems = [];
+      for (let i = 1; i <= 10; i++) {
+        const item = data[`product${i}`];
+        if (item) loadedItems.push(item);
+      }
+      setMyItems(loadedItems);
+    }
+  };
+
+  fetchEditData();
+}, [editId]); // editIdが変わった時だけ実行
 
   // ストレージの画像URLを取得する関数
   const getImageUrl = (imgPath) => {
@@ -96,13 +148,45 @@ export default function AddMyset() {
     setIsOpenConfirm(false)
   }
 
+  const updateMyset = async () => {
+    if(name === "") return alert("マイセット名は必ず入力して下さい。");
+    if(myItems.length < 1) return alert("商品を1つ以上選択してください。");
+
+    const { error: updateError } = await supabase
+      .from("myset")
+      .update({
+        name: name,
+        product1: myItems[0]?.id ?? null,
+        product2: myItems[1]?.id ?? null,
+        product3: myItems[2]?.id ?? null,
+        product4: myItems[3]?.id ?? null,
+        product5: myItems[4]?.id ?? null,
+        product6: myItems[5]?.id ?? null,
+        product7: myItems[6]?.id ?? null,
+        product8: myItems[7]?.id ?? null,
+        product9: myItems[8]?.id ?? null,
+        product10: myItems[9]?.id ?? null,
+      })
+      .eq('id', editId); // URLのIDと一致するレコードを更新
+
+    if (updateError) {
+      console.log(updateError);
+      alert("更新に失敗しました");
+      return;
+    }
+
+    alert("更新完了しました！");
+    setIsOpenConfirm(false);
+    router.push("/"); // 一覧に戻る
+  };
+
   return (
     <div className="pb-[200px]">
       <p className="mt-[50px] text-[#4d4d4d] font-bold text-[25px] text-center">名前</p>
       <div className="mt-[10px] text-center">
-        <input type="text" value={name} onChange={(e) => setName(e.target.value)} 
+        <input type="text" value={name} onChange={(e) => setName(e.target.value)}
         className="w-[300px] h-[30px] border-[#DB9292] border-[4px] rounded-[10px] text-[14px] text-center"
-        placeholder="入力..."/>        
+        placeholder="入力..."/>
       </div>
 
       {/* 登録しようとしているマイアイテムエリア */}
@@ -116,7 +200,7 @@ export default function AddMyset() {
                     <div className="w-[60px] h-[60px] mt-[5px] mx-auto flex items-center justify-center border-[#d9d9d9] border-[1px] bg-white relative">
                       <Image src={getImageUrl(mi.image_path)} alt='商品画像' width={100} height={100}
                         style={{width:"auto", height:"90%"}}/>
-                      <button 
+                      <button
                         onClick={()=>{
                         setMyItems(myItems.filter((_, i) => i !== index))
                         }}
@@ -129,7 +213,7 @@ export default function AddMyset() {
                         }}
                         className="absolute bottom-[-6px] right-[-5px]"
                       >
-                      </button>                      
+                      </button>
                     </div>
                 </div>
                 {index < 9 && (
@@ -146,12 +230,12 @@ export default function AddMyset() {
           ) : (
             <p className="w-[230px] text-black text-[20px] text-center">登録した商品を追加してください</p>
           )
-        }          
+        }
       </div>
 
       {/* 完成ボタン */}
       <div className="w-full mx-auto mt-[20px] flex justify-center">
-        <button 
+        <button
         onClick={() => setIsOpenConfirm(true)}
         className="w-[120px] h-[46px] mt-5 bg-[#F4969C] rounded-[10px] cursor-pointer text-[25px] text-center text-white">
           完成
@@ -165,13 +249,13 @@ export default function AddMyset() {
             <p className="text-[#4d4d4d] text-[20px] text-center">完成でよろしいでしょうか？</p>
           </div>
           <div className="mt-[10px] flex gap-5">
-            <button 
-            onClick={() => setIsOpenConfirm(false)} 
+            <button
+            onClick={() => setIsOpenConfirm(false)}
             className="h-[40px] border cursor-pointer px-5 text-[20px] text-center bg-[#8FA0E1] text-white rounded-[10px] border-[2px] border-white">
               キャンセル
             </button>
-            <button 
-            onClick={() => addMyset()} 
+            <button
+            onClick={() => editId ? updateMyset() : addMyset()}
             className="h-[40px] border cursor-pointer px-5 text-[20px] text-center bg-[#C73537] text-white rounded-[10px] border-[2px] border-white">
               OK
             </button>
@@ -200,7 +284,7 @@ export default function AddMyset() {
             )
           }
       </div>
- 
+
       {/* 商品表示エリア */}
         {
           product.length > 0 ? (
@@ -209,7 +293,7 @@ export default function AddMyset() {
                 product
                 .filter((p)=> category === 0 || p.category === category)
                 .map((p) => (
-                  <div key={p.id} 
+                  <div key={p.id}
                     onClick={() => {
                           setItem(p)
                           setIsOpenItem(true)
@@ -221,10 +305,10 @@ export default function AddMyset() {
                         style={{width:"auto", height:"90%"}}
                         />
                       </div>
-                  </div>                  
-                ))  
+                  </div>
+                ))
               }
-            </div>  
+            </div>
           ) : (
             <p className="mt-10 text-center">商品情報を取得中…</p>
           )
@@ -255,18 +339,18 @@ export default function AddMyset() {
               </div>
             </div>
             <div className="mt-[10px] flex gap-5">
-              <button 
-              onClick={() => setIsOpenItem(false)} 
+              <button
+              onClick={() => setIsOpenItem(false)}
               className="h-[40px] cursor-pointer px-5 text-[20px] text-center bg-[#8FA0E1] text-white rounded-[10px] border-[2px] border-white">
                 閉じる
               </button>
-              <button 
+              <button
               onClick={()=>{
                 if(!item) return;
                 setMyItems([...myItems, item])
                 setIsOpenItem(false)
                 setItem(null)
-              }} 
+              }}
               className="h-[40px] border cursor-pointer px-5 text-[20px] text-center bg-[#B3E3D3] text-white rounded-[10px] border-[2px] border-white">
                 追加
               </button>
@@ -278,8 +362,8 @@ export default function AddMyset() {
               <p className="w-[210px] text-[#4d4d4d] text-[20px] text-center">組合わせで登録できる商品は10個までです。</p>
             </div>
             <div className="mt-[10px]">
-              <button 
-                  onClick={() => setIsOpenItem(false)} 
+              <button
+                  onClick={() => setIsOpenItem(false)}
                   className="h-[40px] border cursor-pointer px-5 text-[20px] text-center bg-[#C73537] text-white rounded-[10px] border-[2px] border-white">
                     閉じる
               </button>
