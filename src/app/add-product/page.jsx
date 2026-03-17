@@ -20,8 +20,13 @@ export default function Home() {
   const [customCategory,setCustomCategory] = useState("");
 
   //画像ファイル
-  const [image,setImage] = useState(null);
+  const [isImage,setIsImage] = useState(null);
 
+  // 完成確認モーダル
+  const [isOpenConfirm, setIsOpenConfirm] = useState(false);
+
+  // 送信中かどうかを管理するステート（二重送信防止用）
+  const [isLoading, setIsLoading] = useState(false);
 
   const fetchCategories = async () => {
     const {data} = await supabase
@@ -44,75 +49,191 @@ console.log(selectedCategory);
 console.log(customCategory);
 // console.log(image);
 
+const handleSubmit = async () => {
+    // 1. 二重送信ガード
+    if (isLoading) return;
 
-
-    const handleSubmit = async () => {
-            if(productName === "") return alert("商品名は必ず入力して下さい。");
-            if (!selectedCategory) return alert("カテゴリーを選択して下さい。");
-            if (!image) return alert("画像を選択してください");
-
-
-            if (selectedCategory === "入力" && !customCategory) {
-    return alert("新しいカテゴリー名を入力してください。");
-  }
-
-    let finalCategoryId = selectedCategory;
-
-    // 入力が押された時だけカテゴリ追加
-    if (selectedCategory === "入力") {
-        const { data: newCat, error: catError } = await supabase
-        .from('category')
-        .insert([{ name: customCategory }])
-        .select()
-        .single();
-
-        if (catError) {
-        console.error(catError);
-        return alert("新規カテゴリーの登録に失敗しました");
-        }
-        // 新しく発行された ID を上書きする
-        finalCategoryId = newCat.id;
+    // 2. バリデーション
+    if (productName === "") {
+      alert("商品名は必ず入力して下さい。");
+      setIsOpenConfirm(false);
+      return;
     }
-    //画像用
-      const fileExt = image.name.split('.').pop() || 'jpg';
-    　const fileName = `images/${Date.now()}.${fileExt}`;
+    if (!selectedCategory) {
+      alert("カテゴリーを選択して下さい。");
+      setIsOpenConfirm(false);
+      return;
+    }
+    if (!isImage) {
+      alert("画像を選択してください");
+      setIsOpenConfirm(false);
+      return;
+    }
+    if (selectedCategory === "入力" && !customCategory) {
+      alert("新しいカテゴリー名を入力してください。");
+      setIsOpenConfirm(false);
+      return;
+    }
 
-      // ストレージに追加
-      const { error: uploadError } = await supabase.storage
-        .from("product_image")
-        .upload(fileName, image)
-      if (uploadError) {
-        console.log(uploadError);
-        alert("画像アップロードに失敗しました")
-        return;
-      }
+    // 3. 処理開始（ロック）
+    setIsLoading(true);
 
-      // テーブルに追加
-      const { error: insertError } = await supabase
-        .from("product")
-        .insert([
-          {
-            name:productName,
+    try {
+      let finalCategoryId = selectedCategory;
+
+      // カテゴリ追加
+      if (selectedCategory === "入力") {
+        const { data: newCat, error: catError } = await supabase
+          .from('category')
+          .insert([{ name: customCategory }])
+          .select()
+          .single();
+
+        if (catError) throw catError;
+        finalCategoryId = newCat.id;
+      }
+
+      // 画像アップロード準備
+      const fileExt = isImage.name.split('.').pop() || 'jpg';
+      const fileName = `images/${Date.now()}.${fileExt}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("product_image")
+        .upload(fileName, isImage);
+
+      if (uploadError) throw uploadError;
+
+      // プロダクト登録
+      const { error: insertError } = await supabase
+        .from("product")
+        .insert([
+          {
+            name: productName,
             category: finalCategoryId,
             image_path: fileName,
-            ingredient1: ingredients[0],
-            ingredient2: ingredients[1],
-            ingredient3: ingredients[2],
-            ingredient4: ingredients[3],
-            ingredient5: ingredients[4],
+            ingredient1: ingredients[0] || null,
+            ingredient2: ingredients[1] || null,
+            ingredient3: ingredients[2] || null,
+            ingredient4: ingredients[3] || null,
+            ingredient5: ingredients[4] || null,
+          },
+        ]);
+
+      if (insertError) {
+        await supabase.storage.from("product_image").remove([fileName]);
+        throw insertError;
+      }
+
+      alert("登録が完了しました！");
+      setIsOpenConfirm(false);
+
+      // リセット
+      setProductName("");
+      setIngredients([]);
+      setIsImage(null);
+      setSelectedCategory("");
+      setCustomCategory("");
+
+    } catch (error) {
+      console.error("Submit Error:", error);
+      alert("登録中にエラーが発生しました。");
+    } finally {
+      // 4. 最後に必ずロックを解除
+      setIsLoading(false);
+    }
+  };
+
+//     const handleSubmit = async () => {
+//             if (isLoading) return;
+//             if(productName === "") {
+
+//                 alert("商品名は必ず入力して下さい。");
+//                 setIsOpenConfirm(false);
+//                 return
+//             }
+//             if (!selectedCategory) {
+//                 alert("カテゴリーを選択して下さい。");
+//                 setIsOpenConfirm(false);
+//                 return
+//             }
+//             if (!isImage) {
+//                 alert("画像を選択してください");
+//                 setIsOpenConfirm(false);
+//                 return
+//             }
+//             if (selectedCategory === "入力" && !customCategory) {
+//                 alert("新しいカテゴリー名を入力してください。");
+//                 setIsOpenConfirm(false);
+//                 return
+//             }
+
+//             setIsLoading(true);
+
+//     let finalCategoryId = selectedCategory;
+
+//     // 入力が押された時だけカテゴリ追加
+//     if (selectedCategory === "入力") {
+//         const { data: newCat, error: catError } = await supabase
+//         .from('category')
+//         .insert([{ name: customCategory }])
+//         .select()
+//         .single();
+
+//         if (catError) {
+//         console.error(catError);
+//         return alert("新規カテゴリーの登録に失敗しました");
+//         }
+//         // 新しく発行された ID を上書きする
+//         finalCategoryId = newCat.id;
+//     }
+//     //画像用
+//       const fileExt = isImage.name.split('.').pop() || 'jpg';
+//     　const fileName = `images/${Date.now()}.${fileExt}`;
+
+//       // ストレージに追加
+//       const { error: uploadError } = await supabase.storage
+//         .from("product_image")
+//         .upload(fileName, isImage)
+//       if (uploadError) {
+//         console.log(uploadError);
+//         alert("画像アップロードに失敗しました")
+//         return;
+//       }
+
+//       // テーブルに追加
+//       const { error: insertError } = await supabase
+//         .from("product")
+//         .insert([
+//           {
+//             name:productName,
+//             category: finalCategoryId,
+//             image_path: fileName,
+//             ingredient1: ingredients[0],
+//             ingredient2: ingredients[1],
+//             ingredient3: ingredients[2],
+//             ingredient4: ingredients[3],
+//             ingredient5: ingredients[4],
 
 
 
-          },
-        ]);
-      if (insertError) {
-        await supabase.storage.from("product_image").remove([fileName])
-        console.log(insertError);
-        alert("テーブル登録に失敗しました")
-        return
-      }
+//           },
+//         ]);
+//       if (insertError) {
+//         await supabase.storage.from("product_image").remove([fileName])
+//         console.log(insertError);
+//         alert("テーブル登録に失敗しました")
+//         return
+//       }
 
-  }
+//     alert("登録が完了しました！");
+//     setIsOpenConfirm(false); // モーダルを閉じる
+
+//     // 入力欄をリセット（必要であれば）
+//     setProductName("");
+//     setIngredients([]);
+//     setIsImage(null);
+
+//   }
 
 
   return (
@@ -126,24 +247,43 @@ console.log(customCategory);
       setSelectedCategory={setSelectedCategory}
       customCategory={customCategory}
       setCustomCategory={setCustomCategory}
-      image={image}
-      setImage={setImage}
+      isImage={isImage}
+      setIsImage={setIsImage}
 
        />
        <div className="mt-5">
-        <h2 className="text-center font-bold text-gray-700 mb-5 mt-5">成分を選択</h2>
+        <h2 className="mt-[40px] text-[#4d4d4d] font-bold text-[25px] text-center mb-4">成分</h2>
          <ComboBox ingredients={ingredients} setIngredients={setIngredients}/>
        </div>
 
-       <div className="px-6 pb-10 flex items-center justify-center mb-10">
-            {/* 完成ボタン */}
+
+        <div className="w-full mx-auto mt-[20px] flex justify-center">
+        <button
+        onClick={() => setIsOpenConfirm(true)}
+        className="w-[120px] h-[46px] mt-5 bg-[#F4969C] rounded-[10px] cursor-pointer text-[25px] text-center text-white">
+          完成
+        </button>
+      </div>
+      {/* 完成確認モーダル */}
+      {isOpenConfirm && (
+        <div className="fixed inset-0 bg-white/80 flex flex-col items-center justify-center">
+          <div className="w-[320px] py-2 px-3  border-[10px] border-[#DB9292] rounded-[20px] bg-white flex flex-col items-center justify-center">
+            <p className="text-[#4d4d4d] text-[20px] text-center">完成でよろしいでしょうか？</p>
+          </div>
+          <div className="mt-[10px] flex gap-5">
+            <button
+            onClick={() => setIsOpenConfirm(false)}
+            className="h-[40px] border cursor-pointer px-5 text-[20px] text-center bg-[#8FA0E1] text-white rounded-[10px] border-[2px] border-white">
+              キャンセル
+            </button>
             <button
             onClick={handleSubmit}
-            className="bg-pink-300 hover:bg-pink-400 text-white font-bold py-2 px-10 rounded-full"
-            >
-                完成
+            className="h-[40px] border cursor-pointer px-5 text-[20px] text-center bg-[#C73537] text-white rounded-[10px] border-[2px] border-white">
+              OK
             </button>
+          </div>
         </div>
+      )}
     </>
   );
 }

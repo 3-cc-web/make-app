@@ -13,7 +13,17 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useState } from "react";
 import { X } from "lucide-react";
-
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer"
+import { Search } from "lucide-react"
 
 const  ComboBox = ({ingredients,setIngredients}) => {
   const frameworks = [
@@ -52,7 +62,9 @@ const  ComboBox = ({ingredients,setIngredients}) => {
   "酸化亜鉛", "酸化チタン", "メトキシケイヒ酸エチルヘキシル", "t-ブチルメトキシジベンゾイルメタン"
 ];
 
-
+//ドロワー用
+const [open, setOpen] = useState(false);
+//入力用
 const [query, setQuery] = useState("");
 
 // const displayRows = Array.from({ length: ingredients.length + 1 });
@@ -68,6 +80,7 @@ const handleAdd = () => {
     }
     setIngredients([...ingredients, query]);
 
+    setOpen(false);
     setQuery("");
   };
 
@@ -76,35 +89,104 @@ const handleAdd = () => {
     setIngredients(ingredients.filter((_, i) => i !== index));
   };
 
+// 決定ボタンを押してドロワーを閉じる
+  const handleFinalize = () => {
+    setOpen(false); // ドロワーを閉じる
+  };
+
+
 console.log(ingredients);
 
 
 
   return (
+
+
     <div>
 
         <div>
-          <Combobox items={frameworks} value={query}  onValueChange={setQuery}  >
-            <ComboboxInput placeholder={`成分を選択...`} onChange={(e) => setQuery(e.target.value)} style={{ fontSize: '1.275rem', lineHeight: '2.25rem' }} className={"h-[60px] mb-6 text-3xl"}/>
-            <ComboboxContent>
-              <ComboboxEmpty>成分が見つかりません</ComboboxEmpty>
-              <ComboboxList>
-                {(item) => (
-                  <ComboboxItem key={item} value={item} className={"text-2xl p-2"}>
-                    {item}
-                  </ComboboxItem>
-                )}
-              </ComboboxList>
-            </ComboboxContent>
-          </Combobox>
-
-        </div>
-
-        <div className="flex justify-center mb-10">
+          <Drawer>
+            <DrawerTrigger asChild>
+                <button
+                  type="button"
+                  className="w-full border border-green-300 rounded-full px-4 py-2 text-sm text-left text-gray-400 bg-white outline-none ring-offset-2 focus:ring-2 focus:ring-green-200 transition-all flex items-center justify-between"
+                >
+                  {/* 選択された成分があればそれを表示、なければプレースホルダー風にする */}
+                  <span>{ingredients.length > 0 ? `${ingredients.length}件の成分を選択中...` : "成分を入力..."}</span>
+                  <Search size={16} className="text-green-400" />
+                </button>
+              </DrawerTrigger>
+            <DrawerContent>
+              <DrawerHeader>
+              <DrawerTitle className={"text-2xl"}>成分を選択</DrawerTitle>
+              <DrawerDescription className={"text-xl"}>最大5件まで</DrawerDescription>
+    </DrawerHeader>
+              <Combobox items={frameworks} value={query}  onValueChange={setQuery}  >
+                <ComboboxInput placeholder={`成分を選択...`} onChange={(e) => setQuery(e.target.value)} style={{ fontSize: '1.275rem', lineHeight: '2.25rem' }} className={"h-[60px] mb-6 text-3xl"}/>
+                <ComboboxContent
+                // 【重要】ドロワーの外に飛ばさない
+                      portalled={false}
+                      // リストをクリックした時にドロワーの「外側クリック判定」を無視させる
+                      onCloseAutoFocus={(e) => e.preventDefault()}
+                      onPointerDownOutside={(e) => e.preventDefault()}
+                >
+                  <ComboboxEmpty>成分が見つかりません</ComboboxEmpty>
+                 <ComboboxList>
+                    {(item) => (
+                      <ComboboxItem
+                        key={item}
+                        value={item}
+                        className="text-2xl p-2 cursor-pointer pointer-events-auto"
+                        // onClickだとDrawerにブロックされるので、その手前のイベントで値をセット
+                        onMouseDown={(e) => {
+                          e.preventDefault(); // Drawerの閉じ動作などを阻止
+                          e.stopPropagation(); // イベントが上に漏れるのを阻止
+                          setQuery(item);
+                        }}
+                      >
+                        {item}
+                      </ComboboxItem>
+                    )}
+                  </ComboboxList>
+                </ComboboxContent>
+              </Combobox>
+               <div className="flex justify-center mb-10">
             <Button onClick={handleAdd} className="h-[50px] w-[70px] text-2xl">決定</Button>
+               </div>
+
+
+              <div className="flex gap-4 flex-col min-h-[220px] bg-gray-50/50 rounded-lg p-2 border border-dashed border-gray-200">
+                  {ingredients.length > 0 ? (
+                    ingredients.map((v, i) => (
+                      <Badge key={i} variant="outline" className="text-xl h-[36px] bg-gray-200 justify-between px-4">
+                        {v}
+                        <button
+                          onClick={() => handleRemove(i)}
+                          className="hover:bg-slate-300 rounded-full p-1 transition-colors ml-2"
+                          aria-label="削除"
+                        >
+                          <X size={18} className="text-slate-600 hover:text-red-500" />
+                        </button>
+                      </Badge>
+                    ))
+                  ) : (
+                    <p className="text-gray-400 text-center my-auto text-lg">成分を追加してください</p>
+                  )}
+                </div>
+
+               <DrawerFooter>
+
+                <DrawerClose>
+                  <Button variant="outline" className="w-full h-[60px] text-2xl font-bold text-white border-2 bg-red-700 hover:bg-gray-100">完了</Button>
+                </DrawerClose>
+               </DrawerFooter>
+            </DrawerContent>
+          </Drawer>
         </div>
 
-        <div className="flex gap-6 flex-col">
+
+
+        <div className="flex gap-6 flex-col p-6">
 
             {ingredients.map((v,i) => (
               <Badge key={i} variant="outline" className="text-xl h-[30px] bg-gray-200">

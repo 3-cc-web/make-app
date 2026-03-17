@@ -9,32 +9,37 @@ const Footer = () => {
          '/add-myset': '組合わせ\n登録',
          '/': 'Top',
          '/products':'商品\n確認',
-         '':'組合わせ\n確認',
+         '/mysets':'組合わせ\n確認',
          };
-    //ヘッダーのタイトル表示のマッピング
-    //  const currentTitle = titleMap[pathname] || 'タイトルなし';
 
 
     if(pathname === '/') return;
     return (
 
-        <footer className="fixed bottom-0 left-0 w-full z-50">
+        <footer className="fixed bottom-0 left-0 w-full z-50 bg-white">
             <ul className="flex justify-center items-end gap-1">
                 {Object.entries(titleMap).map(([path,label],i) => {
 
                     const isActive = pathname === path;
+                    const isTop = path === '/';
+                    let bgColor = "bg-[#E58D67]";
+                    let isBgColor = "bg-[#9CC8BA]"
 
-                    let bgColor = "bg-main-bg";
 
                     if(i===0 || i===1) {
-                        bgColor ="bg-[#B3E3D3]"
+                        bgColor ="bg-[#B3E3D3]";
+                        isBgColor = "bg-[#9CC8BA]";
+                    }
+                    if(i===3 || i===4) {
+                        bgColor ="bg-[#B59372]";
+                        isBgColor = "bg-[#9B7C5E]";
                     }
                     if(i===3 || i===4) {
                     bgColor = "bg-[#B59372]"
                         }
                     return(
 
-                        <li key={i} className={`py-4 flex-1 text-center text-white font-bold text-sm ${isActive ? `h-[90px] rounded-t-2xl bg-[#F4969C]` : `h-[60px] ${bgColor}`}`}>
+                        <li key={i} className={`py-4 ${isTop ? "flex-[1.5] text-2xl" : "flex-1 text-sm"} text-center text-white font-bold  ${isActive ? `h-[75px] rounded-t-2xl ${isBgColor} ` : `h-[60px] ${bgColor}`}`}>
                             <Link href={path} className="flex items-center justify-center w-full h-full leading-none whitespace-pre-wrap leading-tight">{label}</Link>
                             </li>
                     )
