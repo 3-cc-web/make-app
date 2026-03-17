@@ -1,6 +1,7 @@
 "use client";
 import { useState,useEffect } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import { useRouter } from "next/navigation"
 
 // カテゴリー名に応じて色を変える。
 const categoryColors = {
@@ -13,57 +14,59 @@ const categoryColors = {
 
 export default function ProductsPage() {
 
-//現在選択中のカテゴリー。初期値は "All"
-const [selectedCategory, setSelectedCategory] = useState(0);
-//モーダルで表示する商品。nullのときはモーダルを閉じる
-const [modalProduct, setModalProduct] = useState(null);
-//商品一覧。後で追加・編集・削除できるようstateで管理
-const [products, setProducts] = useState([]);
-//編集中かどうかのフラグ
-const [isEditing, setIsEditing] = useState(false);
-//編集フォームの入力値
-const [editForm, setEditForm] = useState({ name: "", category: "" });
-//全カテゴリ
-const [categories, setCategories] = useState(null);
+    const router = useRouter();
 
-// 初期描画時にSupabaseから取得するもの
-useEffect(() => {
-    // カテゴリ一覧を取得
-    const fetchCategories = async () => {
-        const {data} = await supabase
-        .from('category')
-        .select(`
-            id,
-            name
-        `)
-        .order('id', {ascending: true})
-        setCategories(data || [])
+    //現在選択中のカテゴリー。初期値は "All"
+    const [selectedCategory, setSelectedCategory] = useState(0);
+    //モーダルで表示する商品。nullのときはモーダルを閉じる
+    const [modalProduct, setModalProduct] = useState(null);
+    //商品一覧。後で追加・編集・削除できるようstateで管理
+    const [products, setProducts] = useState([]);
+    //編集中かどうかのフラグ
+    const [isEditing, setIsEditing] = useState(false);
+    //編集フォームの入力値
+    const [editForm, setEditForm] = useState({ name: "", category: "" });
+    //全カテゴリ
+    const [categories, setCategories] = useState(null);
+
+    // 初期描画時にSupabaseから取得するもの
+    useEffect(() => {
+        // カテゴリ一覧を取得
+        const fetchCategories = async () => {
+            const {data} = await supabase
+            .from('category')
+            .select(`
+                id,
+                name
+            `)
+            .order('id', {ascending: true})
+            setCategories(data || [])
+        }
+        fetchCategories()
+
+        // 商品一覧を取得
+        const fetchProduct = async () => {
+            const {data} = await supabase
+            .from('product')
+            .select(`
+                *
+            `)
+            .order('id', {ascending: true})
+            setProducts(data || [])
+        }
+        fetchProduct()
+    }, [])
+
+    // ストレージの画像URLを取得する関数
+    const getImageUrl = (imgPath) => {
+    if(!imgPath) return null;
+
+    const { data } = supabase.storage
+        .from('product_image')
+        .getPublicUrl(imgPath)
+
+    return data.publicUrl
     }
-    fetchCategories()
-
-    // 商品一覧を取得
-    const fetchProduct = async () => {
-        const {data} = await supabase
-        .from('product')
-        .select(`
-            *
-        `)
-        .order('id', {ascending: true})
-        setProducts(data || [])
-    }
-    fetchProduct()
-}, [])
-
-// ストレージの画像URLを取得する関数
-const getImageUrl = (imgPath) => {
-if(!imgPath) return null;
-
-const { data } = supabase.storage
-    .from('product_image')
-    .getPublicUrl(imgPath)
-
-return data.publicUrl
-}
 
 
     //表示する商品を絞り込む
@@ -284,7 +287,8 @@ const filteredProducts =
                         閉じる
                     </button>
                     <button
-                        onClick={handleEditStart}
+                        // onClick={handleEditStart}
+                        onClick={() => router.push(`/add-product?edit=${modalProduct.id}`)}
                         className="flex-1 border border-green-300 text-green-500 rounded-lg py-2 text-sm"
                     >
                         編集
