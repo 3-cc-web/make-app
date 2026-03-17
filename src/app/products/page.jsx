@@ -113,8 +113,10 @@ const filteredProducts =
             <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)} // 選択が変わったらstateを更新
-                className="mt-4 w-full border border-green-300 rounded-full px-4 py-2 text-sm outline-none focus:ring-4 focus:ring-green-200"
+                className="mt-4 border-[#9CC8BA] border-[8px] rounded-[15px] w-full px-4 py-2 text-sm outline-none focus:ring-4 focus:ring-green-200"
             >
+
+        
 
                 {/* categories配列をループしてoptionを生成 */}
                 {categories.map((cat) => (
@@ -127,7 +129,7 @@ const filteredProducts =
 
             {/* --- 商品グリッド --- */}
             {/* grid-cols-4で1行4列に並べる */}
-            <div className="grid grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
             {filteredProducts.map((product) => (
                 // 商品カード。クリックでモーダルを開く
                 <button
