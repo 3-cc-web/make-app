@@ -244,7 +244,7 @@ export default function AddMyset() {
 
       {/* 完成確認モーダル */}
       {isOpenConfirm && (
-        <div className="fixed inset-0 bg-white/80 flex flex-col items-center justify-center">
+        <div className="fixed inset-0 bg-black/40 flex flex-col items-center justify-center">
           <div className="w-[320px] py-2 px-3  border-[10px] border-[#DB9292] rounded-[20px] bg-white flex flex-col items-center justify-center">
             <p className="text-[#4d4d4d] text-[20px] text-center">完成でよろしいでしょうか？</p>
           </div>
@@ -299,7 +299,7 @@ export default function AddMyset() {
                           setIsOpenItem(true)
                         }}
                     className={"w-[80px] h-[110px] cursor-pointer flex flex-col justify-center items-center"}>
-                      <p className="h-[32px] text-xs">{p.name}</p>
+                      <p className="h-[32px] text-xs text-center leading-tight line-clamp-2 w-full">{p.name}</p>
                       <div className="w-[60px] h-[60px] mt-[5px] flex items-center justify-center border-[#d9d9d9] border-[1px] bg-white">
                         <Image src={getImageUrl(p.image_path)} alt='商品画像' width={100} height={100}
                         style={{width:"auto", height:"90%"}}
@@ -317,7 +317,7 @@ export default function AddMyset() {
       {/* 商品選択モーダル */}
       {isOpenItem && (
         myItems.length < 10 ? (
-          <div className="bg-white/80 fixed inset-0 flex flex-col items-center justify-center">
+          <div className="bg-black/40 fixed inset-0 flex flex-col items-center justify-center">
             <div className="w-[320px] py-2 px-3  border-[10px] border-[#DB9292] rounded-[20px] bg-white flex flex-col items-center justify-center">
               <p className="text-[20px]">{item.name}</p>
               <p className="w-fit mt-[6px] px-3 text-[20px] text-center bg-[#B3E3D3] text-white rounded-[10px]">{categories?.find(c => c.id === item.category)?.name}</p>
