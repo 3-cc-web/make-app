@@ -34,6 +34,9 @@ const Footer = () => {
                         bgColor ="bg-[#B59372]";
                         isBgColor = "bg-[#9B7C5E]";
                     }
+                    if(i===3 || i===4) {
+                    bgColor = "bg-[#B59372]"
+                        }
                     return(
 
                         <li key={i} className={`py-4 ${isTop ? "flex-[1.5] text-2xl" : "flex-1 text-sm"} text-center text-white font-bold  ${isActive ? `h-[75px] rounded-t-2xl ${isBgColor} ` : `h-[60px] ${bgColor}`}`}>
