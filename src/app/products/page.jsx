@@ -88,9 +88,28 @@ const filteredProducts =
 
   // ---------- 削除ボタンを押したとき ----------
   // 対象の id を除いた新しい配列を作り、state を更新する
-    const handleDelete = (id) => {
+    const handleDelete = async(id) => {
         // window.confirm で確認ダイアログを出す
         if (!window.confirm("この商品を削除しますか？")) return;
+
+        // console.log("削除対象id:", id, typeof id);
+        for(let i=1;i<=10;i++){
+            await supabase
+            .from('myset')
+            .update({[`product${i}`]:null})
+            .eq(`product${i}`,id)
+        }
+
+        const {error} = await supabase
+        .from('product')
+        .delete()
+        .eq('id',id)    //idが一致するものを削除
+
+        if(error){
+            alert("削除に失敗しました");
+            return;
+        }
+
         setProducts((prev) => prev.filter((p) => p.id !== id));
         handleCloseModal(); // 削除後にモーダルを閉じる
     };
