@@ -116,7 +116,7 @@ console.log(ingredients);
                   <Search size={16} className="text-green-400" />
                 </button>
               </DrawerTrigger>
-            <DrawerContent className="h-[95dvh] max-w-[100vw] flex flex-col fixed bottom-0 left-0 right-0 rounded-t-[20px] bg-white outline-none">
+            <DrawerContent className="h-[90dvh] max-w-[100vw] overflow-hidden flex flex-col fixed top-[5dvh] left-0 right-0 rounded-t-[20px]">
               <DrawerHeader>
               <DrawerTitle className={"text-2xl"}>成分を選択</DrawerTitle>
               <DrawerDescription className={"text-xl"}>最大5件まで</DrawerDescription>
@@ -129,12 +129,7 @@ console.log(ingredients);
   style={{ fontSize: '16px' }}
   className="h-[50px] mb-4 text-base w-full border rounded-md px-3"
 />
-              <div className="flex-1 overflow-y-auto min-h-0 border rounded-md mb-4 bg-white touch-pan-y shadow-inner"
-              style={{
-                      WebkitOverflowScrolling: 'touch', // iOSでヌルヌル動かすため
-                      touchAction: 'pan-y'
-                    }}
-              >
+              <div className="flex-1 overflow-y-auto min-h-0 border rounded-md mb-4 bg-white touch-pan-y shadow-inner" style={{ touchAction: 'pan-y' }}>
                   <ComboboxContent
                   // 【重要】ドロワーの外に飛ばさない
                         portalled={false}
@@ -142,7 +137,7 @@ console.log(ingredients);
                         onCloseAutoFocus={(e) => e.preventDefault()}
                         onPointerDownOutside={(e) => e.preventDefault()}
                         onWheel={(e) => e.stopPropagation()}
-                        // onPointerMove={(e) => e.stopPropagation()}
+                        onPointerMove={(e) => e.stopPropagation()}
                   >
                     <ComboboxEmpty>成分が見つかりません</ComboboxEmpty>
                   <ComboboxList>
