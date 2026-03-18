@@ -146,7 +146,7 @@ export default function AddMyset() {
     }
     alert("登録完了しました！")
     setIsOpenConfirm(false)
-    setName("")
+    set("")
     setMyItems([])
   }
 
