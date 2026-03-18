@@ -191,7 +191,7 @@ console.log(ingredients);
                   )}
                 </div>
 
-               <DrawerFooter className="pt-2 pb-6 px-4 bg-white border-t border-gray-100 shrink-0">
+               <DrawerFooter className="pt-2 pb-12 px-4 bg-white border-t border-gray-100 shrink-0 mb-[env(safe-area-inset-bottom)]">
   <DrawerClose asChild>
     <Button
       variant="outline"
