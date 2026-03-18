@@ -129,13 +129,14 @@ console.log(ingredients);
   style={{ fontSize: '16px' }}
   className="h-[50px] mb-4 text-base w-full border rounded-md px-3"
 />
-              <div className="flex-1 overflow-y-auto min-h-0 border rounded-md mb-4 bg-white">
+              <div className="flex-1 overflow-y-auto min-h-0 border rounded-md mb-4 bg-white touch-pan-y shadow-inner">
                   <ComboboxContent
                   // 【重要】ドロワーの外に飛ばさない
                         portalled={false}
                         // リストをクリックした時にドロワーの「外側クリック判定」を無視させる
                         onCloseAutoFocus={(e) => e.preventDefault()}
                         onPointerDownOutside={(e) => e.preventDefault()}
+                        onWheel={(e) => e.stopPropagation()}
                   >
                     <ComboboxEmpty>成分が見つかりません</ComboboxEmpty>
                   <ComboboxList>
@@ -147,6 +148,7 @@ console.log(ingredients);
                           // onClickだとDrawerにブロックされるので、その手前のイベントで値をセット
                           onMouseDown={(e) => {
                             e.preventDefault(); // Drawerの閉じ動作などを阻止
+                            e.stopPropagation();
                             e.stopPropagation(); // イベントが上に漏れるのを阻止
                             setQuery(item);
                           }}
