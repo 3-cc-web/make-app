@@ -106,11 +106,12 @@ console.log(ingredients);
 
         <div>
           <Drawer
-            open={open}
-            onOpenChange={setOpen} // これで内部の閉じ信号を受け取れるようになります
-            dismissible={false}
-            modal={true}
-          >
+              open={open}
+              onOpenChange={setOpen}
+              dismissible={false}
+              modal={true}
+              repositionInputs={false} // ← これを追加：入力時の位置調整を無効化
+            >
             <DrawerTrigger asChild>
                 <button
                   type="button"
@@ -121,7 +122,7 @@ console.log(ingredients);
                   <Search size={16} className="text-green-400" />
                 </button>
               </DrawerTrigger>
-            <DrawerContent className="h-[95dvh] max-w-[100vw] flex flex-col fixed bottom-0 left-0 right-0 rounded-t-[20px] bg-white outline-none pb-[env(safe-area-inset-bottom)]">
+            <DrawerContent className="fixed bottom-0 left-0 right-0 top-[5%] max-w-[100vw] flex flex-col rounded-t-[20px] bg-white outline-none pb-[env(safe-area-inset-bottom)]">
               <DrawerHeader>
               <DrawerTitle className={"text-2xl"}>成分を選択</DrawerTitle>
               <DrawerDescription className={"text-xl"}>最大5件まで</DrawerDescription>
