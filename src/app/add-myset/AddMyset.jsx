@@ -146,6 +146,8 @@ export default function AddMyset() {
     }
     alert("登録完了しました！")
     setIsOpenConfirm(false)
+    set("")
+    setMyItems([])
   }
 
   const updateMyset = async () => {
