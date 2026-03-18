@@ -45,13 +45,13 @@ const LoadingPage = () => {
             priority
             className="object-contain"
           />
-                    <Image
+          <Image
             src="/my-set-plus.png"
             alt="main-logo"
             width={150}
             height={150}
             priority
-            className="object-contain mt-[-15px] ml-1"
+            className="object-contain mt-[-5px] ml-1"
           />
         </div>
       </div>
