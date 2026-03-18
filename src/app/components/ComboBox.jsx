@@ -116,41 +116,49 @@ console.log(ingredients);
                   <Search size={16} className="text-green-400" />
                 </button>
               </DrawerTrigger>
-            <DrawerContent>
+            <DrawerContent className="h-[90dvh] max-w-[100vw] overflow-hidden flex flex-col fixed top-[5dvh] left-0 right-0 rounded-t-[20px]">
               <DrawerHeader>
               <DrawerTitle className={"text-2xl"}>成分を選択</DrawerTitle>
               <DrawerDescription className={"text-xl"}>最大5件まで</DrawerDescription>
     </DrawerHeader>
               <Combobox items={frameworks} value={query}  onValueChange={setQuery}  >
-                <ComboboxInput placeholder={`成分を選択...`} onChange={(e) => setQuery(e.target.value)} style={{ fontSize: '1.275rem', lineHeight: '2.25rem' }} className={"h-[60px] mb-6 text-3xl"}/>
-                <ComboboxContent
-                // 【重要】ドロワーの外に飛ばさない
-                      portalled={false}
-                      // リストをクリックした時にドロワーの「外側クリック判定」を無視させる
-                      onCloseAutoFocus={(e) => e.preventDefault()}
-                      onPointerDownOutside={(e) => e.preventDefault()}
-                >
-                  <ComboboxEmpty>成分が見つかりません</ComboboxEmpty>
-                 <ComboboxList>
-                    {(item) => (
-                      <ComboboxItem
-                        key={item}
-                        value={item}
-                        className="text-2xl p-2 cursor-pointer pointer-events-auto"
-                        // onClickだとDrawerにブロックされるので、その手前のイベントで値をセット
-                        onMouseDown={(e) => {
-                          e.preventDefault(); // Drawerの閉じ動作などを阻止
-                          e.stopPropagation(); // イベントが上に漏れるのを阻止
-                          setQuery(item);
-                        }}
-                      >
-                        {item}
-                      </ComboboxItem>
-                    )}
-                  </ComboboxList>
-                </ComboboxContent>
+                <ComboboxInput
+  placeholder="成分を選択..."
+  onChange={(e) => setQuery(e.target.value)}
+  // 【最重要】styleで16pxを直接指定してズームを封じる
+  style={{ fontSize: '16px' }}
+  className="h-[50px] mb-4 text-base w-full border rounded-md px-3"
+/>
+              <div className="flex-1 overflow-y-auto min-h-0 border rounded-md mb-4 bg-white">
+                  <ComboboxContent
+                  // 【重要】ドロワーの外に飛ばさない
+                        portalled={false}
+                        // リストをクリックした時にドロワーの「外側クリック判定」を無視させる
+                        onCloseAutoFocus={(e) => e.preventDefault()}
+                        onPointerDownOutside={(e) => e.preventDefault()}
+                  >
+                    <ComboboxEmpty>成分が見つかりません</ComboboxEmpty>
+                  <ComboboxList>
+                      {(item) => (
+                        <ComboboxItem
+                          key={item}
+                          value={item}
+                          className="text-2xl p-2 cursor-pointer pointer-events-auto"
+                          // onClickだとDrawerにブロックされるので、その手前のイベントで値をセット
+                          onMouseDown={(e) => {
+                            e.preventDefault(); // Drawerの閉じ動作などを阻止
+                            e.stopPropagation(); // イベントが上に漏れるのを阻止
+                            setQuery(item);
+                          }}
+                        >
+                          {item}
+                        </ComboboxItem>
+                      )}
+                    </ComboboxList>
+                  </ComboboxContent>
+                </div>
               </Combobox>
-               <div className="flex justify-center mb-10">
+               <div className="flex justify-center shrink-0 mb-4">
             <Button onClick={handleAdd} className="h-[50px] w-[70px] text-2xl">決定</Button>
                </div>
 
